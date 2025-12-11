@@ -1,0 +1,12 @@
+# Ignore Python cache
+__pycache__/
+src/__pychache__/
+*.pyc
+
+# Ignore Data
+data/*
+
+# Ignore Environment
+.env
+.venv/
+venv/
