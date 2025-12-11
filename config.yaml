@@ -1,0 +1,26 @@
+length :
+- value : 24.0
+- units : 'in'
+
+diameter :
+- value : 0.055
+- units : 'in'
+
+power :
+- value : 789
+- units : 'watts'
+
+volumetric_flow_rate :
+- value : 53.9
+- units : 'mL/min'
+
+T0 :
+- value : 700
+- units : 'K'
+
+P0 :
+- value : 600
+- units : 'psi'
+
+number_of_slices :
+- value : 101

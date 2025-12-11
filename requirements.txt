@@ -1,0 +1,7 @@
+cantera
+pint
+numpy
+yaml
+pandas
+matplotlib
+streamlit
