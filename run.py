@@ -6,6 +6,11 @@ from src.input_parser import get_inputs
 from src.model import simulate
 from src.plots import create_plots
 from src.output_writer import write_results_to_csv
+from src.output_data_exports import (
+    export_temperature_vs_z,
+    export_deposition_vs_z,
+    export_composition_vs_z,
+)
 
 
 def file_exists(path: str):
@@ -34,9 +39,22 @@ if __name__ == '__main__':
     
     results = simulate(inputs, mechanism_path)
     
-    csv_path = args.output if args.output else os.path.join(os.getcwd(), 'output', 'results.csv')
+    csv_path = args.output if args.output else os.path.join(os.getcwd(), 'data', 'results.csv')
     os.makedirs(os.path.dirname(csv_path) or '.', exist_ok=True)
+
+    # Write the main aggregated CSV
     write_results_to_csv(results, csv_path)
+
+    # Write additional per-z outputs for easier plotting/analysis
+    base_dir = os.path.dirname(csv_path) or '.'
+    try:
+        export_temperature_vs_z(results, os.path.join(base_dir, 'temperature_vs_z.csv'))
+        export_deposition_vs_z(results, os.path.join(base_dir, 'deposition_vs_z.csv'))
+        export_composition_vs_z(results, os.path.join(base_dir, 'composition_vs_z.csv'))
+    except Exception as e:
+        # Do not fail the whole run just because extra exports fail
+        print(json.dumps({"export_error": str(e)}, indent=2))
+
     print(json.dumps({"output_csv": csv_path}, indent=2))
     
     if args.plot:

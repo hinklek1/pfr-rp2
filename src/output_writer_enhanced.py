@@ -12,6 +12,7 @@ def _as_list(x):
 
 
 def write_results_to_csv(soln, csv_path: str) -> str:
+    # Enhanced writer: outputs T, Y, and other fields per slice
     n = len(soln)
     z = getattr(soln, 'z', None)
     rows = []
@@ -19,32 +20,26 @@ def write_results_to_csv(soln, csv_path: str) -> str:
         row = {'slice': i}
         if z is not None:
             row['z'] = z[i]
-        # TDY
         tdy = getattr(soln[i], 'TDY', None)
         if tdy is not None:
             row['TDY'] = json.dumps(_as_list(tdy))
-            # extract T if possible
             try:
-                Tval = float(tdy[0])
-                row['T'] = Tval
+                row['T'] = float(tdy[0])
             except Exception:
                 row['T'] = None
         else:
             row['TDY'] = None
             row['T'] = None
-        # Gas composition if available
-        comp_out = None
+        # gas composition
         if hasattr(soln[i], 'Y'):
             yv = getattr(soln[i], 'Y')
-            comp_out = _as_list(yv)
+            row['Y'] = json.dumps(_as_list(yv))
         elif hasattr(soln[i], 'composition'):
-            comp_out = getattr(soln[i], 'composition')
-            if isinstance(comp_out, dict):
-                comp_out = list(comp_out.values())
+            comp = getattr(soln[i], 'composition')
+            if isinstance(comp, dict):
+                row['Y'] = json.dumps(list(comp.values()))
             else:
-                comp_out = _as_list(comp_out)
-        if comp_out is not None:
-            row['Y'] = json.dumps(comp_out)
+                row['Y'] = json.dumps(_as_list(comp))
         else:
             row['Y'] = None
         # surface data
@@ -58,7 +53,6 @@ def write_results_to_csv(soln, csv_path: str) -> str:
             else:
                 row[field] = None
         rows.append(row)
-    # write as DataFrame
     df = pd.DataFrame(rows)
     os.makedirs(os.path.dirname(csv_path) or '.', exist_ok=True)
     df.to_csv(csv_path, index=False)
