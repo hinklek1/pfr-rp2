@@ -72,9 +72,15 @@ def optimize_kinetics(inputs, mechanism_path, exp_csv_path, n_reactions=None, ob
     # Initial guess: logA = 10, Ea = 50 kcal/mol for each reaction
     initial_params = [10.0] * n_reactions + [50.0] * n_reactions  # logA + Ea_kcal
 
-    # Bounds
-    bounds = ([5] * n_reactions + [10] * n_reactions,  # lower
-              [15] * n_reactions + [200] * n_reactions)  # upper
+    # Expanded bounds
+    lower_bounds = [0.0] * n_reactions + [1.0] * n_reactions  # logA >=0, Ea >=1 kcal/mol
+    upper_bounds = [20.0] * n_reactions + [500.0] * n_reactions  # reasonable upper limits
+    bounds = (lower_bounds, upper_bounds)
+
+    # Validate initial guess
+    for i, (p, lb, ub) in enumerate(zip(initial_params, lower_bounds, upper_bounds)):
+        if not (lb <= p <= ub):
+            logging.warning(f"Initial param {i} ({p}) is outside bounds [{lb}, {ub}]")
 
     # Optimize
     result = least_squares(
@@ -108,6 +114,12 @@ def main():
     # Run optimization
     result, exp_z, exp_dep = optimize_kinetics(inputs, args.mechanism, args.experimental, args.n_reactions, args.objective)
 
+    # Check if optimized params hit bounds
+    bounds_hit = []
+    for i, (p, lb, ub) in enumerate(zip(result.x, lower_bounds, upper_bounds)):
+        if abs(p - lb) < 1e-3 or abs(p - ub) < 1e-3:
+            bounds_hit.append(f"Param {i} at bound ({p:.3f}, bounds [{lb}, {ub}])")
+
     # Compute diagnostics
     final_residuals = objective_function(result.x, inputs, args.mechanism, exp_z, exp_dep, args.objective)
     rmse = np.sqrt(np.mean(final_residuals**2))
@@ -122,7 +134,8 @@ def main():
         'nfev': result.nfev,
         'rmse': rmse,
         'mae': mae,
-        'objective_type': args.objective
+        'objective_type': args.objective,
+        'bounds_hit': bounds_hit
     }
 
     with open(args.output, 'w') as f:
