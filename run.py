@@ -24,7 +24,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Run RP-2 PFR with YAML inputs")
     parser.add_argument('-c', '--config', required=True, help='Path to YAML input config')
     parser.add_argument('-m', '--mechanism', required=True, help='Path to RP-2 mechanism YAML')
-    parser.add_argument('-p', '--plot', required=False, action='store_true', help='Generate plots of results')
+    parser.add_argument('-p', '--plot', required=False, action='store_true', help='Generate default plots (temperature, deposition)')
+    parser.add_argument('--variables', required=False, help='Comma-separated list of variables to plot (implies plotting)')
     parser.add_argument('-o', '--output', required=False, help='Path to output results CSV')
     args = parser.parse_args()
 
@@ -56,6 +57,9 @@ if __name__ == '__main__':
         print(json.dumps({"export_error": str(e)}, indent=2))
 
     print(json.dumps({"output_csv": csv_path}, indent=2))
-    
-    if args.plot:
+
+    if args.variables:
+        variables = [v.strip() for v in args.variables.split(',')]
+        create_plots(results, mechanism_path, variables=variables)
+    elif args.plot:
         create_plots(results, mechanism_path)
