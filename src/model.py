@@ -84,10 +84,7 @@ def simulate(inputs, mechanism_path, kinetic_params=None, print_kinetics=False):
     sim.atol = 1e-24  # absolute tolerance
     soln = ct.SolutionArray(gas, extra=['z', 'surf_coverages', 'surf_rates', 'carbon_deposition_rate'])
     # Propagate Cantera gas species names to the solution array for downstream output
-    try:
-        soln.species_names = list(gas.species_names)
-    except Exception:
-        pass
+    soln.species_names = list(gas.species_names)
 
     for ri in range(N):
         wdot = rsurf.phase.net_production_rates
