@@ -83,6 +83,11 @@ def simulate(inputs, mechanism_path, kinetic_params=None, print_kinetics=False):
     sim.rtol = 1e-12  # relative tolerance
     sim.atol = 1e-24  # absolute tolerance
     soln = ct.SolutionArray(gas, extra=['z', 'surf_coverages', 'surf_rates', 'carbon_deposition_rate'])
+    # Propagate Cantera gas species names to the solution array for downstream output
+    try:
+        soln.species_names = list(gas.species_names)
+    except Exception:
+        pass
 
     for ri in range(N):
         wdot = rsurf.phase.net_production_rates
@@ -97,7 +102,7 @@ def simulate(inputs, mechanism_path, kinetic_params=None, print_kinetics=False):
         
         #sim.advance(100000)  # this advances to a time, but results in less heat added (q_dot * dt)
     H_out = gas.enthalpy_mass * mass_flow_rate
-    #mass_bulk = simpson(soln.Cdep,soln.z)
-    Ebal = (H_in + heat_added) / (H_out) # + bulk.enthalpy_mass * mass_bulk)
+    mass_bulk = np.trapz(soln.carbon_deposition_rate, soln.z)
+    Ebal = (H_in + heat_added) / (H_out + bulk.enthalpy_mass * mass_bulk)
     
     return soln
