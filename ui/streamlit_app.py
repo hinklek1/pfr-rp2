@@ -10,6 +10,7 @@ import time
 import logging
 
 from src.model import simulate
+from src.utils import validate_inputs, plot_setup, save_plot
 from src.output_writer import write_results_to_csv
 
 
@@ -81,26 +82,9 @@ def main():
     with col3: T_ref_unit = st.selectbox("", ["K", "C"], key="T_ref_unit")
 
     # Validate inputs
-    if length_val <= 0:
-        validation_errors.append("Length must be positive.")
-    if diameter_val <= 0:
-        validation_errors.append("Diameter must be positive.")
-    if power_val < 0:
-        validation_errors.append("Power must be non-negative.")
-    if flow_val <= 0:
-        validation_errors.append("Flow rate must be positive.")
-    if T0_val < 0:
-        validation_errors.append("Inlet temperature must be positive.")
-    if P0_val <= 0:
-        validation_errors.append("Inlet pressure must be positive.")
-    if slices < 10:
-        validation_errors.append("Number of slices must be at least 10.")
-    if not inlet_comp.strip():
-        validation_errors.append("Inlet composition cannot be empty.")
-    if not initial_cov.strip():
-        validation_errors.append("Initial coverages cannot be empty.")
-    if T_ref < 0:
-        validation_errors.append("Reference temperature must be positive.")
+    validation_errors = validate_inputs(
+        length_val, diameter_val, power_val, flow_val, T0_val, P0_val, slices, inlet_comp, initial_cov, T_ref
+    )
 
     if validation_errors:
         for error in validation_errors:
@@ -185,7 +169,7 @@ def main():
                     y = [row.TDY[2][idx] if hasattr(row, 'TDY') and len(row.TDY) > 2 and len(row.TDY[2]) > idx else 0 for row in results]
                     ylabel = f"{selected_var1} Mass Fraction"
 
-                fig, ax = plt.subplots(figsize=(5, 3))
+                fig, ax = plot_setup()
                 ax.plot(results.z, y)
                 ax.set_xlabel("z (m)")
                 ax.set_ylabel(ylabel)
@@ -221,7 +205,7 @@ def main():
                     y = [row.TDY[2][idx] if hasattr(row, 'TDY') and len(row.TDY) > 2 and len(row.TDY[2]) > idx else 0 for row in results]
                     ylabel = f"{selected_var2} Mass Fraction"
 
-                fig, ax = plt.subplots(figsize=(5, 3))
+                fig, ax = plot_setup()
                 ax.plot(results.z, y)
                 ax.set_xlabel("z (m)")
                 ax.set_ylabel(ylabel)

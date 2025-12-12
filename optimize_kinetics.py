@@ -18,6 +18,7 @@ import pandas as pd
 from scipy.optimize import least_squares
 import os
 import logging
+from src.utils import calculate_metrics, interpolate_data
 
 from src.input_parser import get_inputs
 from src.model import simulate
@@ -38,7 +39,7 @@ def objective_function(params, inputs, mechanism_path, exp_z, exp_dep, objective
         sim_dep = results.carbon_deposition_rate
 
         # Interpolate simulated data to experimental z points
-        sim_dep_interp = np.interp(exp_z, results.z, sim_dep)
+        sim_dep_interp = interpolate_data(results.z, sim_dep, exp_z)
 
         # Compute residuals
         residuals = sim_dep_interp - exp_dep
@@ -122,8 +123,7 @@ def main():
 
     # Compute diagnostics
     final_residuals = objective_function(result.x, inputs, args.mechanism, exp_z, exp_dep, args.objective)
-    rmse = np.sqrt(np.mean(final_residuals**2))
-    mae = np.mean(np.abs(final_residuals))
+    rmse, mae = calculate_metrics(final_residuals)
 
     # Save results
     output_data = {

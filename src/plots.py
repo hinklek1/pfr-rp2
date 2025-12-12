@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from typing import Any, Dict, Optional
+from .utils import plot_setup, save_plot
 
 
 def _safe_get(obj: Any, name: str, default: Any = None) -> Any:
@@ -87,15 +88,12 @@ def create_plots(results: Any, mechanism_path: str, output_dir: Optional[str] = 
                     y_arr.append(0)
             y_arr = np.array(y_arr)
             if z_arr is not None and y_arr.size > 0 and z_arr.shape[0] == y_arr.shape[0]:
-                plt.figure()
-                plt.plot(z_arr, y_arr, label=f'{var} mass fraction')
-                plt.xlabel('z (m)')
-                plt.ylabel(f'{var} mass fraction')
-                plt.title(f'{var} vs. Length')
-                out_path = os.path.join(out_dir, f'{var}_vs_z.png')
-                plt.savefig(out_path, dpi=150)
-                plots[f'{var}_vs_z'] = out_path
-                plt.close()
+                fig, ax = plot_setup()
+                ax.plot(z_arr, y_arr, label=f'{var} mass fraction')
+                ax.set_xlabel('z (m)')
+                ax.set_ylabel(f'{var} mass fraction')
+                ax.set_title(f'{var} vs. Length')
+                plots[f'{var}_vs_z'] = save_plot(fig, f'{var}_vs_z.png', out_dir)
         # Add more variables if needed (e.g., surface coverages)
 
     return plots
