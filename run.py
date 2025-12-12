@@ -38,7 +38,7 @@ if __name__ == '__main__':
         print(json.dumps({"error": str(e)}, indent=2))
         raise SystemExit(2)
     
-    results = simulate(inputs, mechanism_path)
+    results, ebal = simulate(inputs, mechanism_path)
     
     csv_path = args.output if args.output else os.path.join(os.getcwd(), 'data', 'results.csv')
     os.makedirs(os.path.dirname(csv_path) or '.', exist_ok=True)

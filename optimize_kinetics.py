@@ -33,7 +33,7 @@ def load_experimental_data(exp_csv_path: str):
 def objective_function(params, inputs, mechanism_path, exp_z, exp_dep):
     """Objective function for optimization: sum of squared residuals."""
     try:
-        results = simulate(inputs, mechanism_path, kinetic_params=params)
+        results, _ = simulate(inputs, mechanism_path, kinetic_params=params)
         sim_dep = results.carbon_deposition_rate
 
         # Interpolate simulated data to experimental z points

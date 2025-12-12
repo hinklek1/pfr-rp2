@@ -12,7 +12,7 @@ class TestModelSimulation(unittest.TestCase):
         mechanism_path = os.path.join(os.path.dirname(__file__), '..', 'mech', 'RP2_surf.yaml')
 
         inputs = get_inputs(config_path)
-        results = simulate(inputs, mechanism_path)
+        results, ebal = simulate(inputs, mechanism_path)
 
         # Basic checks
         self.assertIsNotNone(results)
@@ -20,6 +20,7 @@ class TestModelSimulation(unittest.TestCase):
         self.assertTrue(hasattr(results, 'T'))
         self.assertTrue(len(results.z) > 0)
         self.assertTrue(len(results.T) > 0)
+        self.assertAlmostEqual(ebal, 1.0, delta=0.01)
 
     def test_simulation_with_kinetic_params(self):
         # Test with dummy kinetic params
@@ -29,7 +30,7 @@ class TestModelSimulation(unittest.TestCase):
         inputs = get_inputs(config_path)
         # Dummy params: 2 reactions, logA and Ea
         kinetic_params = [10, 11, 20, 21]  # logA1, logA2, Ea1_kcal, Ea2_kcal
-        results = simulate(inputs, mechanism_path, kinetic_params=kinetic_params)
+        results, _ = simulate(inputs, mechanism_path, kinetic_params=kinetic_params)
 
         self.assertIsNotNone(results)
         self.assertTrue(hasattr(results, 'z'))

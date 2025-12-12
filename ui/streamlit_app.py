@@ -87,7 +87,7 @@ def main():
         if st.button("Run Simulation"):
             try:
                 start_time = time.time()
-                results = simulate(inputs, mechanism_path)
+                results, _ = simulate(inputs, mechanism_path)
                 elapsed = time.time() - start_time
                 st.success("Simulation completed.")
                 st.info(f"Simulation time: {elapsed:.2f} seconds | Slices: {len(results)}")
