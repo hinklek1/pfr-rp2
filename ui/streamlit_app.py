@@ -3,6 +3,7 @@ import tempfile
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+import traceback
 
 from src.model import simulate
 
@@ -86,7 +87,7 @@ def main():
                 st.session_state['results'] = results
                 st.session_state['species_names'] = getattr(results, '_species_names', [])
             except Exception as e:
-                st.error(f"Error during simulation: {e}")
+                st.error(f"Error during simulation: {e}\n{traceback.format_exc()}")
                 st.session_state.pop('results', None)
     else:
         st.info("Please upload the mechanism file and configure parameters to run the simulation.")
