@@ -129,9 +129,9 @@ def main():
                             st.session_state['csv_data'] = rf.read()
                         os.unlink(csv_path)
                 except Exception as e:
-                    logging.error(f"Error during simulation: {e}", exc_info=True)
-                st.error(f"Error during simulation: {e}")
-                    st.session_state.pop('results', None)
+                     logging.error(f"Error during simulation: {e}", exc_info=True)
+                     st.error(f"Error during simulation: {e}")
+                     st.session_state.pop('results', None)
     else:
         st.info("Please upload the mechanism file and configure parameters to run the simulation.")
 

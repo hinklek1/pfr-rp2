@@ -47,18 +47,21 @@ A comprehensive Cantera-based simulation tool for plug-flow reactors (PFR) model
 ### Command-Line Simulation
 Run PFR simulations with YAML configuration:
 ```bash
-python run.py -c config.yaml -m mech/RP2_surf.yaml -o results.csv --variables temperature,deposition,RP2
+python run.py -c config.yaml -m mech/RP2_surf.yaml -o data --variables temperature,deposition,RP2
 ```
 
 **Arguments:**
 - `-c, --config`: Path to YAML configuration file
 - `-m, --mechanism`: Path to Cantera mechanism YAML
-- `-o, --output`: Output CSV file path (optional)
+- `-o, --output`: Output directory path (optional, defaults to 'data')
 - `-p, --plot`: Generate default plots (temperature, deposition)
 - `--variables`: Comma-separated list of variables to plot (implies plotting)
 
 **Example Output:**
-- `results.csv`: Full simulation data with per-species columns
+- `data/results.csv`: Full simulation data with per-species columns
+- `data/temperature_vs_z.csv`: Temperature profile data
+- `data/deposition_vs_z.csv`: Deposition rate profile data
+- `data/composition_vs_z.csv`: Species composition profile data
 - PNG plots for selected variables
 
 ### Web UI

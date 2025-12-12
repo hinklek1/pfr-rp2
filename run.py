@@ -27,7 +27,7 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--mechanism', required=True, help='Path to RP-2 mechanism YAML')
     parser.add_argument('-p', '--plot', required=False, action='store_true', help='Generate default plots (temperature, deposition)')
     parser.add_argument('--variables', required=False, help='Comma-separated list of variables to plot (implies plotting)')
-    parser.add_argument('-o', '--output', required=False, help='Path to output results CSV')
+    parser.add_argument('-o', '--output', required=False, help='Path to output directory for results')
     args = parser.parse_args()
 
     config_path = file_exists(args.config)
@@ -41,14 +41,15 @@ if __name__ == '__main__':
     
     results, ebal = simulate(inputs, mechanism_path)
     
-    csv_path = args.output if args.output else os.path.join(os.getcwd(), 'data', 'results.csv')
-    os.makedirs(os.path.dirname(csv_path) or '.', exist_ok=True)
+    output_dir = args.output if args.output else 'data'
+    csv_path = os.path.join(output_dir, 'results.csv')
+    os.makedirs(output_dir, exist_ok=True)
 
     # Write the main aggregated CSV
     write_results_to_csv(results, csv_path)
 
     # Write additional per-z outputs for easier plotting/analysis
-    base_dir = os.path.dirname(csv_path) or '.'
+    base_dir = output_dir
     try:
         export_temperature_vs_z(results, os.path.join(base_dir, 'temperature_vs_z.csv'))
         export_deposition_vs_z(results, os.path.join(base_dir, 'deposition_vs_z.csv'))

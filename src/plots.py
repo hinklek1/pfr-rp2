@@ -32,10 +32,12 @@ def create_plots(results: Any, mechanism_path: str, output_dir: Optional[str] = 
     """
     # Attempt to extract common plotted series from the Cantera SolutionArray
     z = _safe_get(results, 'z', None)
-    dep = _safe_get(results, 'carbon_deposition_rate', None) or _safe_get(results, 'Cdep', None)
+    dep = _safe_get(results, 'carbon_deposition_rate', None)
+    if dep is None:
+        dep = _safe_get(results, 'Cdep', None)
     T = None
     if hasattr(results, 'TDY'):
-        T = getattr(results, 'TDY')
+        T = getattr(results, 'TDY')[0]  # Temperature is first element of TDY
     elif hasattr(results, 'T'):
         T = getattr(results, 'T')
     species_names = getattr(results, '_species_names', [])
