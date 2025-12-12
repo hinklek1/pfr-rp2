@@ -99,29 +99,56 @@ def main():
 
         st.header("Results Visualization")
         plot_options = ["Temperature"] + species_names + ["Deposition Rate"]
-        selected_var = st.selectbox("Select variable to plot vs z", plot_options)
 
-        try:
-            if selected_var == "Temperature":
-                y = results.T
-                ylabel = "Temperature (K)"
-            elif selected_var == "Deposition Rate":
-                y = results.carbon_deposition_rate
-                ylabel = "Carbon Deposition Rate"
-            else:
-                # Species composition
-                idx = species_names.index(selected_var)
-                y = [row.TDY[2][idx] if hasattr(row, 'TDY') and len(row.TDY) > 2 and len(row.TDY[2]) > idx else 0 for row in results]
-                ylabel = f"{selected_var} Mass Fraction"
+        col1, col2 = st.columns(2)
 
-            fig, ax = plt.subplots()
-            ax.plot(results.z, y)
-            ax.set_xlabel("z (m)")
-            ax.set_ylabel(ylabel)
-            ax.set_title(f"{selected_var} vs z")
-            st.pyplot(fig)
-        except Exception as e:
-            st.error(f"Plotting error: {e}")
+        with col1:
+            selected_var1 = st.selectbox("Select variable to plot vs z (Left)", plot_options, key="var1")
+            try:
+                if selected_var1 == "Temperature":
+                    y = results.T
+                    ylabel = "Temperature (K)"
+                elif selected_var1 == "Deposition Rate":
+                    y = results.carbon_deposition_rate
+                    ylabel = "Carbon Deposition Rate"
+                else:
+                    # Species composition
+                    idx = species_names.index(selected_var1)
+                    y = [row.TDY[2][idx] if hasattr(row, 'TDY') and len(row.TDY) > 2 and len(row.TDY[2]) > idx else 0 for row in results]
+                    ylabel = f"{selected_var1} Mass Fraction"
+
+                fig, ax = plt.subplots(figsize=(5, 3))
+                ax.plot(results.z, y)
+                ax.set_xlabel("z (m)")
+                ax.set_ylabel(ylabel)
+                ax.set_title(f"{selected_var1} vs z")
+                st.pyplot(fig)
+            except Exception as e:
+                st.error(f"Plotting error: {e}")
+
+        with col2:
+            selected_var2 = st.selectbox("Select variable to plot vs z (Right)", plot_options, key="var2")
+            try:
+                if selected_var2 == "Temperature":
+                    y = results.T
+                    ylabel = "Temperature (K)"
+                elif selected_var2 == "Deposition Rate":
+                    y = results.carbon_deposition_rate
+                    ylabel = "Carbon Deposition Rate"
+                else:
+                    # Species composition
+                    idx = species_names.index(selected_var2)
+                    y = [row.TDY[2][idx] if hasattr(row, 'TDY') and len(row.TDY) > 2 and len(row.TDY[2]) > idx else 0 for row in results]
+                    ylabel = f"{selected_var2} Mass Fraction"
+
+                fig, ax = plt.subplots(figsize=(5, 3))
+                ax.plot(results.z, y)
+                ax.set_xlabel("z (m)")
+                ax.set_ylabel(ylabel)
+                ax.set_title(f"{selected_var2} vs z")
+                st.pyplot(fig)
+            except Exception as e:
+                st.error(f"Plotting error: {e}")
 
 
 if __name__ == '__main__':
