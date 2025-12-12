@@ -58,7 +58,7 @@ def create_plots(results: Any, mechanism_path: str, output_dir: Optional[str] = 
                 plt.figure()
                 plt.plot(z_arr, dep_arr, label='deposition rate')
                 plt.xlabel('z (m)')
-                plt.ylabel('deposition rate')
+                plt.ylabel('Deposition Rate (kg/m²/s)')
                 plt.title('Deposition Rate vs. Length')
                 out_path = os.path.join(out_dir, 'deposition_vs_z.png')
                 plt.savefig(out_path, dpi=150)

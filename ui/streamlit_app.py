@@ -212,7 +212,7 @@ def main():
                     ylabel = "Temperature (K)"
                 elif selected_var2 == "Deposition Rate":
                     y = results.carbon_deposition_rate
-                    ylabel = "Carbon Deposition Rate"
+                    ylabel = "Carbon Deposition Rate (kg/m²/s)"
                 else:
                     # Species composition
                     idx = species_names.index(selected_var2)
