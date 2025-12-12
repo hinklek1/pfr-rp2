@@ -4,8 +4,11 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import traceback
+import io
+import pandas as pd
 
 from src.model import simulate
+from src.output_writer import write_results_to_csv
 
 
 def main():
@@ -86,6 +89,12 @@ def main():
                 st.success("Simulation completed.")
                 st.session_state['results'] = results
                 st.session_state['species_names'] = getattr(results, '_species_names', [])
+                # Create CSV in memory
+                with tempfile.NamedTemporaryFile(mode='w+', suffix='.csv', delete=False) as f:
+                    csv_path = write_results_to_csv(results, f.name)
+                    with open(csv_path, 'r') as rf:
+                        st.session_state['csv_data'] = rf.read()
+                    os.unlink(csv_path)
             except Exception as e:
                 st.error(f"Error during simulation: {e}\n{traceback.format_exc()}")
                 st.session_state.pop('results', None)
@@ -99,6 +108,15 @@ def main():
 
         st.header("Results Visualization")
         plot_options = ["Temperature"] + species_names + ["Deposition Rate"]
+
+        # Download CSV
+        if 'csv_data' in st.session_state:
+            st.download_button(
+                label="Download CSV",
+                data=st.session_state['csv_data'],
+                file_name="simulation_results.csv",
+                mime="text/csv"
+            )
 
         col1, col2 = st.columns(2)
 
@@ -123,6 +141,18 @@ def main():
                 ax.set_ylabel(ylabel)
                 ax.set_title(f"{selected_var1} vs z")
                 st.pyplot(fig)
+
+                # Save plot button
+                buf = io.BytesIO()
+                fig.savefig(buf, format="png")
+                buf.seek(0)
+                st.download_button(
+                    label="Save Plot (PNG)",
+                    data=buf,
+                    file_name=f"{selected_var1}_vs_z.png",
+                    mime="image/png",
+                    key="download1"
+                )
             except Exception as e:
                 st.error(f"Plotting error: {e}")
 
@@ -147,6 +177,18 @@ def main():
                 ax.set_ylabel(ylabel)
                 ax.set_title(f"{selected_var2} vs z")
                 st.pyplot(fig)
+
+                # Save plot button
+                buf = io.BytesIO()
+                fig.savefig(buf, format="png")
+                buf.seek(0)
+                st.download_button(
+                    label="Save Plot (PNG)",
+                    data=buf,
+                    file_name=f"{selected_var2}_vs_z.png",
+                    mime="image/png",
+                    key="download2"
+                )
             except Exception as e:
                 st.error(f"Plotting error: {e}")
 
