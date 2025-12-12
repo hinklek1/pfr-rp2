@@ -48,10 +48,10 @@ def main():
     slices = st.number_input("Number of Slices", value=101, min_value=10, step=1, key="slices")
 
     # Inlet comp
-    inlet_comp = st.text_input("Inlet Composition", value="RP2:1.0", key="inlet_comp")
+    inlet_comp = st.text_input("Inlet Composition", value="CH4:1.0", key="inlet_comp")
 
     # Initial cov
-    initial_cov = st.text_input("Initial Coverages", value="CC(s):1.0", key="initial_cov")
+    initial_cov = st.text_input("Initial Coverages", value="CH4(s):1.0", key="initial_cov")
 
     # T_ref
     col1, col2 = st.columns([3,1])

@@ -88,7 +88,10 @@ def simulate(inputs, mechanism_path, kinetic_params=None, print_kinetics=False):
 
     for ri in range(N):
         wdot = rsurf.phase.net_production_rates
+        try:
         kC = surf.kinetics_species_index('C(B)')
+    except KeyError:
+        kC = 0  # fallback if 'C(B)' not found
         soln.append(TDY=reactor.phase.TDY, z=ri*dz, surf_coverages=rsurf.coverages, surf_rates=surf.net_rates_of_progress, carbon_deposition_rate=wdot[kC])
         # Set the state of the reservoir to match that of the previous reactor
         upstream.syncState()
