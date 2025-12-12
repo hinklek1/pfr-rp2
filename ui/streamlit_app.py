@@ -13,26 +13,50 @@ def main():
 
     # Input parameters
     st.header("Simulation Parameters")
-    col1, col2 = st.columns(2)
-    with col1:
-        length_val = st.number_input("Length", value=24.0, min_value=0.1)
-        length_unit = st.selectbox("Length Units", ["in", "m", "cm"], key="length_unit")
-        diameter_val = st.number_input("Diameter", value=0.055, min_value=0.001)
-        diameter_unit = st.selectbox("Diameter Units", ["in", "m", "cm"], key="diameter_unit")
-        power_val = st.number_input("Power", value=789.0, min_value=0.0)
-        power_unit = st.selectbox("Power Units", ["watts", "W"], key="power_unit")
-        flow_val = st.number_input("Volumetric Flow Rate", value=53.9, min_value=0.1)
-        flow_unit = st.selectbox("Flow Units", ["mL/min", "L/min", "m3/s"], key="flow_unit")
-    with col2:
-        T0_val = st.number_input("Inlet Temperature", value=700.0, min_value=100.0)
-        T0_unit = st.selectbox("T0 Units", ["K", "C"], key="T0_unit")
-        P0_val = st.number_input("Inlet Pressure", value=600.0, min_value=0.1)
-        P0_unit = st.selectbox("P0 Units", ["psi", "bar", "atm"], key="P0_unit")
-        slices = st.number_input("Number of Slices", value=101, min_value=10, step=1)
-        inlet_comp = st.text_input("Inlet Composition", value="RP2:1.0")
-        initial_cov = st.text_input("Initial Coverages", value="CC(s):1.0")
-        T_ref = st.number_input("Reference Temperature", value=300.0, min_value=100.0)
-        T_ref_unit = st.selectbox("T_ref Units", ["K", "C"], key="T_ref_unit")
+
+    # Length
+    col1, col2 = st.columns([3,1])
+    with col1: length_val = st.number_input("Length", value=24.0, min_value=0.1, key="length_val")
+    with col2: length_unit = st.selectbox("", ["in", "m", "cm"], key="length_unit")
+
+    # Diameter
+    col1, col2 = st.columns([3,1])
+    with col1: diameter_val = st.number_input("Diameter", value=0.055, min_value=0.001, key="diameter_val")
+    with col2: diameter_unit = st.selectbox("", ["in", "m", "cm"], key="diameter_unit")
+
+    # Power
+    col1, col2 = st.columns([3,1])
+    with col1: power_val = st.number_input("Power", value=789.0, min_value=0.0, key="power_val")
+    with col2: power_unit = st.selectbox("", ["watts", "W"], key="power_unit")
+
+    # Flow
+    col1, col2 = st.columns([3,1])
+    with col1: flow_val = st.number_input("Volumetric Flow Rate", value=53.9, min_value=0.1, key="flow_val")
+    with col2: flow_unit = st.selectbox("", ["mL/min", "L/min", "m3/s"], key="flow_unit")
+
+    # T0
+    col1, col2 = st.columns([3,1])
+    with col1: T0_val = st.number_input("Inlet Temperature", value=700.0, min_value=100.0, key="T0_val")
+    with col2: T0_unit = st.selectbox("", ["K", "C"], key="T0_unit")
+
+    # P0
+    col1, col2 = st.columns([3,1])
+    with col1: P0_val = st.number_input("Inlet Pressure", value=600.0, min_value=0.1, key="P0_val")
+    with col2: P0_unit = st.selectbox("", ["psi", "bar", "atm"], key="P0_unit")
+
+    # Slices
+    slices = st.number_input("Number of Slices", value=101, min_value=10, step=1, key="slices")
+
+    # Inlet comp
+    inlet_comp = st.text_input("Inlet Composition", value="RP2:1.0", key="inlet_comp")
+
+    # Initial cov
+    initial_cov = st.text_input("Initial Coverages", value="CC(s):1.0", key="initial_cov")
+
+    # T_ref
+    col1, col2 = st.columns([3,1])
+    with col1: T_ref = st.number_input("Reference Temperature", value=300.0, min_value=100.0, key="T_ref")
+    with col2: T_ref_unit = st.selectbox("", ["K", "C"], key="T_ref_unit")
 
     # Construct inputs dict
     inputs = {
@@ -85,7 +109,7 @@ def main():
         else:
             # Species composition
             idx = species_names.index(selected_var)
-            y = [row.Y[idx] if hasattr(row, 'Y') and len(row.Y) > idx else 0 for row in results]
+            y = [row.TDY[2][idx] if hasattr(row, 'TDY') and len(row.TDY) > 2 and len(row.TDY[2]) > idx else 0 for row in results]
             ylabel = f"{selected_var} Mass Fraction"
 
         fig, ax = plt.subplots()
