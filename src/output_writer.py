@@ -18,6 +18,10 @@ def _to_python(obj):
 
 def _derive_species_names(soln):
     # Prefer explicit names if available
+    if hasattr(soln, '_species_names'):
+        sn = getattr(soln, '_species_names')
+        if isinstance(sn, (list, tuple)):
+            return [str(n) for n in sn]
     if hasattr(soln, 'species_names'):
         sn = getattr(soln, 'species_names')
         if isinstance(sn, (list, tuple)):
