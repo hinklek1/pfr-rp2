@@ -102,7 +102,7 @@ def simulate(inputs, mechanism_path, kinetic_params=None, print_kinetics=False):
         
         #sim.advance(100000)  # this advances to a time, but results in less heat added (q_dot * dt)
     H_out = gas.enthalpy_mass * mass_flow_rate
-    mass_bulk = np.trapz(soln.carbon_deposition_rate, soln.z)
+    mass_bulk = np.trapezoid(soln.carbon_deposition_rate, soln.z)
     Ebal = (H_in + heat_added) / (H_out + bulk.enthalpy_mass * mass_bulk)
     
     return soln
