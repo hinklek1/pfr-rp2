@@ -18,50 +18,90 @@ def main():
 
     # Input parameters
     st.header("Simulation Parameters")
+    st.markdown("Configure the PFR parameters below. Hover over inputs for help.")
 
-    # Length
+    # Validation
+    validation_errors = []
+
     col1, col2 = st.columns([3,1])
     with col1: length_val = st.number_input("Length", value=24.0, min_value=0.1, key="length_val")
     with col2: length_unit = st.selectbox("", ["in", "m", "cm"], key="length_unit")
+    st.help("Axial length of the reactor tube.")
 
     # Diameter
     col1, col2 = st.columns([3,1])
     with col1: diameter_val = st.number_input("Diameter", value=0.055, min_value=0.001, key="diameter_val")
     with col2: diameter_unit = st.selectbox("", ["in", "m", "cm"], key="diameter_unit")
+    st.help("Inner diameter of the reactor tube.")
 
     # Power
     col1, col2 = st.columns([3,1])
     with col1: power_val = st.number_input("Power", value=789.0, min_value=0.0, key="power_val")
     with col2: power_unit = st.selectbox("", ["watts", "W"], key="power_unit")
+    st.help("Heat input power to the reactor.")
 
     # Flow
     col1, col2 = st.columns([3,1])
     with col1: flow_val = st.number_input("Volumetric Flow Rate", value=53.9, min_value=0.1, key="flow_val")
     with col2: flow_unit = st.selectbox("", ["mL/min", "L/min", "m3/s"], key="flow_unit")
+    st.help("Volumetric flow rate of the fuel mixture.")
 
     # T0
     col1, col2 = st.columns([3,1])
     with col1: T0_val = st.number_input("Inlet Temperature", value=700.0, min_value=100.0, key="T0_val")
     with col2: T0_unit = st.selectbox("", ["K", "C"], key="T0_unit")
+    st.help("Temperature at reactor inlet.")
 
     # P0
     col1, col2 = st.columns([3,1])
     with col1: P0_val = st.number_input("Inlet Pressure", value=600.0, min_value=0.1, key="P0_val")
     with col2: P0_unit = st.selectbox("", ["psi", "bar", "atm"], key="P0_unit")
+    st.help("Pressure at reactor inlet.")
 
     # Slices
     slices = st.number_input("Number of Slices", value=101, min_value=10, step=1, key="slices")
+    st.help("Number of axial discretization points (higher = more accurate but slower).")
 
     # Inlet comp
     inlet_comp = st.text_input("Inlet Composition", value="RP2:1.0", key="inlet_comp")
+    st.help("Gas composition at inlet (e.g., 'RP2:1.0' for pure RP-2).")
 
     # Initial cov
     initial_cov = st.text_input("Initial Coverages", value="CC(s):1.0", key="initial_cov")
+    st.help("Initial surface coverages (e.g., 'CC(s):1.0' for carbon).")
 
     # T_ref
     col1, col2 = st.columns([3,1])
     with col1: T_ref = st.number_input("Reference Temperature", value=300.0, min_value=100.0, key="T_ref")
     with col2: T_ref_unit = st.selectbox("", ["K", "C"], key="T_ref_unit")
+    st.help("Reference temperature for density calculations.")
+
+    # Validate inputs
+    if length_val <= 0:
+        validation_errors.append("Length must be positive.")
+    if diameter_val <= 0:
+        validation_errors.append("Diameter must be positive.")
+    if power_val < 0:
+        validation_errors.append("Power must be non-negative.")
+    if flow_val <= 0:
+        validation_errors.append("Flow rate must be positive.")
+    if T0_val < 0:
+        validation_errors.append("Inlet temperature must be positive.")
+    if P0_val <= 0:
+        validation_errors.append("Inlet pressure must be positive.")
+    if slices < 10:
+        validation_errors.append("Number of slices must be at least 10.")
+    if not inlet_comp.strip():
+        validation_errors.append("Inlet composition cannot be empty.")
+    if not initial_cov.strip():
+        validation_errors.append("Initial coverages cannot be empty.")
+    if T_ref < 0:
+        validation_errors.append("Reference temperature must be positive.")
+
+    if validation_errors:
+        for error in validation_errors:
+            st.error(error)
+        st.stop()  # Prevent running with invalid inputs
 
     # Construct inputs dict
     inputs = {
@@ -85,23 +125,24 @@ def main():
             mechanism_path = mf.name
 
         if st.button("Run Simulation"):
-            try:
-                start_time = time.time()
-                results, _ = simulate(inputs, mechanism_path)
-                elapsed = time.time() - start_time
-                st.success("Simulation completed.")
-                st.info(f"Simulation time: {elapsed:.2f} seconds | Slices: {len(results)}")
-                st.session_state['results'] = results
-                st.session_state['species_names'] = getattr(results, '_species_names', [])
-                # Create CSV in memory
-                with tempfile.NamedTemporaryFile(mode='w+', suffix='.csv', delete=False) as f:
-                    csv_path = write_results_to_csv(results, f.name)
-                    with open(csv_path, 'r') as rf:
-                        st.session_state['csv_data'] = rf.read()
-                    os.unlink(csv_path)
-            except Exception as e:
-                st.error(f"Error during simulation: {e}\n{traceback.format_exc()}")
-                st.session_state.pop('results', None)
+            with st.spinner("Running simulation..."):
+                try:
+                    start_time = time.time()
+                    results, _ = simulate(inputs, mechanism_path)
+                    elapsed = time.time() - start_time
+                    st.success("Simulation completed.")
+                    st.info(f"Simulation time: {elapsed:.2f} seconds | Slices: {len(results)}")
+                    st.session_state['results'] = results
+                    st.session_state['species_names'] = getattr(results, '_species_names', [])
+                    # Create CSV in memory
+                    with tempfile.NamedTemporaryFile(mode='w+', suffix='.csv', delete=False) as f:
+                        csv_path = write_results_to_csv(results, f.name)
+                        with open(csv_path, 'r') as rf:
+                            st.session_state['csv_data'] = rf.read()
+                        os.unlink(csv_path)
+                except Exception as e:
+                    st.error(f"Error during simulation: {e}\n{traceback.format_exc()}")
+                    st.session_state.pop('results', None)
     else:
         st.info("Please upload the mechanism file and configure parameters to run the simulation.")
 
