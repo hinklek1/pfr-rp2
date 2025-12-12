@@ -6,6 +6,7 @@ import numpy as np
 import traceback
 import io
 import pandas as pd
+import time
 
 from src.model import simulate
 from src.output_writer import write_results_to_csv
@@ -85,8 +86,11 @@ def main():
 
         if st.button("Run Simulation"):
             try:
+                start_time = time.time()
                 results = simulate(inputs, mechanism_path)
+                elapsed = time.time() - start_time
                 st.success("Simulation completed.")
+                st.info(f"Simulation time: {elapsed:.2f} seconds | Slices: {len(results)}")
                 st.session_state['results'] = results
                 st.session_state['species_names'] = getattr(results, '_species_names', [])
                 # Create CSV in memory
