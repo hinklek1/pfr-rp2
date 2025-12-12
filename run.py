@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import logging
+from pathlib import Path
 from src.input_parser import get_inputs
 from src.model import simulate
 from src.plots import create_plots
