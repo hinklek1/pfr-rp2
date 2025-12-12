@@ -31,10 +31,10 @@ def load_experimental_data(exp_csv_path: str):
     return df['z'].values, df['deposition_rate'].values
 
 
-def objective_function(params, inputs, mechanism_path, exp_z, exp_dep):
-    """Objective function for optimization: sum of squared residuals."""
+def objective_function(params, inputs, mechanism_path, exp_z, exp_dep, objective_type='l2'):
+    """Objective function for optimization."""
     try:
-        results, _ = simulate(inputs, mechanism_path, kinetic_params=params)
+        results = simulate(inputs, mechanism_path, kinetic_params=params)
         sim_dep = results.carbon_deposition_rate
 
         # Interpolate simulated data to experimental z points
@@ -42,13 +42,21 @@ def objective_function(params, inputs, mechanism_path, exp_z, exp_dep):
 
         # Compute residuals
         residuals = sim_dep_interp - exp_dep
-        return residuals
+
+        if objective_type == 'l2':
+            return residuals  # least squares
+        elif objective_type == 'rmse':
+            return np.sqrt(np.mean(residuals**2)) * np.ones_like(residuals)  # RMSE as scalar, but for least_squares, need vector
+        elif objective_type == 'mae':
+            return np.abs(residuals)  # mean absolute error
+        else:
+            return residuals
     except Exception as e:
         # Return large penalty if simulation fails
         return np.full_like(exp_dep, 1e6)
 
 
-def optimize_kinetics(inputs, mechanism_path, exp_csv_path, n_reactions=None):
+def optimize_kinetics(inputs, mechanism_path, exp_csv_path, n_reactions=None, objective_type='l2'):
     """Perform kinetic parameter optimization."""
     # Load experimental data
     exp_z, exp_dep = load_experimental_data(exp_csv_path)
@@ -73,14 +81,14 @@ def optimize_kinetics(inputs, mechanism_path, exp_csv_path, n_reactions=None):
         objective_function,
         initial_params,
         bounds=bounds,
-        args=(inputs, mechanism_path, exp_z, exp_dep),
+        args=(inputs, mechanism_path, exp_z, exp_dep, objective_type),
         method='trf',
         ftol=1e-6,
         xtol=1e-6,
         max_nfev=100
     )
 
-    return result
+    return result, exp_z, exp_dep
 
 
 def main():
@@ -90,6 +98,7 @@ def main():
     parser.add_argument('-e', '--experimental', required=True, help='Path to experimental deposition CSV')
     parser.add_argument('-o', '--output', required=True, help='Output JSON file for optimized parameters')
     parser.add_argument('-n', '--n_reactions', type=int, help='Number of surface reactions (auto-detected if not provided)')
+    parser.add_argument('--objective', choices=['l2', 'mae'], default='l2', help='Objective function type (default: l2)')
 
     args = parser.parse_args()
 
@@ -97,7 +106,12 @@ def main():
     inputs = get_inputs(args.config)
 
     # Run optimization
-    result = optimize_kinetics(inputs, args.mechanism, args.experimental, args.n_reactions)
+    result, exp_z, exp_dep = optimize_kinetics(inputs, args.mechanism, args.experimental, args.n_reactions, args.objective)
+
+    # Compute diagnostics
+    final_residuals = objective_function(result.x, inputs, args.mechanism, exp_z, exp_dep, args.objective)
+    rmse = np.sqrt(np.mean(final_residuals**2))
+    mae = np.mean(np.abs(final_residuals))
 
     # Save results
     output_data = {
@@ -105,7 +119,10 @@ def main():
         'message': result.message,
         'optimized_params': result.x.tolist(),
         'cost': result.cost,
-        'nfev': result.nfev
+        'nfev': result.nfev,
+        'rmse': rmse,
+        'mae': mae,
+        'objective_type': args.objective
     }
 
     with open(args.output, 'w') as f:
