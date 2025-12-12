@@ -23,58 +23,61 @@ def main():
     # Validation
     validation_errors = []
 
-    col1, col2 = st.columns([3,1])
-    with col1: length_val = st.number_input("Length", value=24.0, min_value=0.1, key="length_val")
-    with col2: length_unit = st.selectbox("", ["in", "m", "cm"], key="length_unit")
-    st.caption("Axial length of the reactor tube.")
+    col1, col2, col3 = st.columns([1,2,1])
+    with col1: st.caption("Axial length of the reactor tube.")
+    with col2: length_val = st.number_input("Length", value=24.0, min_value=0.1, key="length_val")
+    with col3: length_unit = st.selectbox("", ["in", "m", "cm"], key="length_unit")
 
     # Diameter
-    col1, col2 = st.columns([3,1])
-    with col1: diameter_val = st.number_input("Diameter", value=0.055, min_value=0.001, key="diameter_val")
-    with col2: diameter_unit = st.selectbox("", ["in", "m", "cm"], key="diameter_unit")
-    st.caption("Inner diameter of the reactor tube.")
+    col1, col2, col3 = st.columns([1,2,1])
+    with col1: st.caption("Inner diameter of the reactor tube.")
+    with col2: diameter_val = st.number_input("Diameter", value=0.055, min_value=0.001, key="diameter_val")
+    with col3: diameter_unit = st.selectbox("", ["in", "m", "cm"], key="diameter_unit")
 
     # Power
-    col1, col2 = st.columns([3,1])
-    with col1: power_val = st.number_input("Power", value=789.0, min_value=0.0, key="power_val")
-    with col2: power_unit = st.selectbox("", ["watts", "W"], key="power_unit")
-    st.caption("Heat input power to the reactor.")
+    col1, col2, col3 = st.columns([1,2,1])
+    with col1: st.caption("Heat input power to the reactor.")
+    with col2: power_val = st.number_input("Power", value=789.0, min_value=0.0, key="power_val")
+    with col3: power_unit = st.selectbox("", ["watts", "W"], key="power_unit")
 
     # Flow
-    col1, col2 = st.columns([3,1])
-    with col1: flow_val = st.number_input("Volumetric Flow Rate", value=53.9, min_value=0.1, key="flow_val")
-    with col2: flow_unit = st.selectbox("", ["mL/min", "L/min", "m3/s"], key="flow_unit")
-    st.caption("Volumetric flow rate of the fuel mixture.")
+    col1, col2, col3 = st.columns([1,2,1])
+    with col1: st.caption("Volumetric flow rate of the fuel mixture.")
+    with col2: flow_val = st.number_input("Volumetric Flow Rate", value=53.9, min_value=0.1, key="flow_val")
+    with col3: flow_unit = st.selectbox("", ["mL/min", "L/min", "m3/s"], key="flow_unit")
 
     # T0
-    col1, col2 = st.columns([3,1])
-    with col1: T0_val = st.number_input("Inlet Temperature", value=700.0, min_value=100.0, key="T0_val")
-    with col2: T0_unit = st.selectbox("", ["K", "C"], key="T0_unit")
-    st.caption("Temperature at reactor inlet.")
+    col1, col2, col3 = st.columns([1,2,1])
+    with col1: st.caption("Temperature at reactor inlet.")
+    with col2: T0_val = st.number_input("Inlet Temperature", value=700.0, min_value=100.0, key="T0_val")
+    with col3: T0_unit = st.selectbox("", ["K", "C"], key="T0_unit")
 
     # P0
-    col1, col2 = st.columns([3,1])
-    with col1: P0_val = st.number_input("Inlet Pressure", value=600.0, min_value=0.1, key="P0_val")
-    with col2: P0_unit = st.selectbox("", ["psi", "bar", "atm"], key="P0_unit")
-    st.caption("Pressure at reactor inlet.")
+    col1, col2, col3 = st.columns([1,2,1])
+    with col1: st.caption("Pressure at reactor inlet.")
+    with col2: P0_val = st.number_input("Inlet Pressure", value=600.0, min_value=0.1, key="P0_val")
+    with col3: P0_unit = st.selectbox("", ["psi", "bar", "atm"], key="P0_unit")
 
     # Slices
-    slices = st.number_input("Number of Slices", value=101, min_value=10, step=1, key="slices")
-    st.caption("Number of axial discretization points (higher = more accurate but slower).")
+    col1, col2 = st.columns([1,3])
+    with col1: st.caption("Number of axial discretization points.")
+    with col2: slices = st.number_input("Number of Slices", value=101, min_value=10, step=1, key="slices")
 
     # Inlet comp
-    inlet_comp = st.text_input("Inlet Composition", value="RP2:1.0", key="inlet_comp")
-    st.caption("Gas composition at inlet (e.g., 'RP2:1.0' for pure RP-2).")
+    col1, col2 = st.columns([1,3])
+    with col1: st.caption("Gas composition at inlet.")
+    with col2: inlet_comp = st.text_input("Inlet Composition", value="RP2:1.0", key="inlet_comp")
 
     # Initial cov
-    initial_cov = st.text_input("Initial Coverages", value="CC(s):1.0", key="initial_cov")
-    st.caption("Initial surface coverages (e.g., 'CC(s):1.0' for carbon).")
+    col1, col2 = st.columns([1,3])
+    with col1: st.caption("Initial surface coverages.")
+    with col2: initial_cov = st.text_input("Initial Coverages", value="CC(s):1.0", key="initial_cov")
 
     # T_ref
-    col1, col2 = st.columns([3,1])
-    with col1: T_ref = st.number_input("Reference Temperature", value=300.0, min_value=100.0, key="T_ref")
-    with col2: T_ref_unit = st.selectbox("", ["K", "C"], key="T_ref_unit")
-    st.caption("Reference temperature for density calculations.")
+    col1, col2, col3 = st.columns([1,2,1])
+    with col1: st.caption("Reference temperature for density calculations.")
+    with col2: T_ref = st.number_input("Reference Temperature", value=300.0, min_value=100.0, key="T_ref")
+    with col3: T_ref_unit = st.selectbox("", ["K", "C"], key="T_ref_unit")
 
     # Validate inputs
     if length_val <= 0:
