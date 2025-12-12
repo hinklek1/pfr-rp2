@@ -1,7 +1,7 @@
 import argparse
 import json
-from pathlib import Path
 import os
+import logging
 from src.input_parser import get_inputs
 from src.model import simulate
 from src.plots import create_plots
@@ -56,7 +56,7 @@ if __name__ == '__main__':
         # Do not fail the whole run just because extra exports fail
         print(json.dumps({"export_error": str(e)}, indent=2))
 
-    print(json.dumps({"output_csv": csv_path}, indent=2))
+    logging.info(f"Output CSV: {csv_path}")
 
     if args.variables:
         variables = [v.strip() for v in args.variables.split(',')]

@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import least_squares
 import os
+import logging
 
 from src.input_parser import get_inputs
 from src.model import simulate
@@ -110,9 +111,9 @@ def main():
     with open(args.output, 'w') as f:
         json.dump(output_data, f, indent=2)
 
-    print(f"Optimization completed. Results saved to {args.output}")
-    print(f"Success: {result.success}")
-    print(f"Final cost: {result.cost}")
+    logging.info(f"Optimization completed. Results saved to {args.output}")
+    logging.info(f"Success: {result.success}")
+    logging.info(f"Final cost: {result.cost}")
 
 
 if __name__ == '__main__':

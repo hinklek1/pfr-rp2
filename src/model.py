@@ -107,6 +107,6 @@ def simulate(inputs, mechanism_path, kinetic_params=None, print_kinetics=False):
 
     # Check energy balance
     if abs(Ebal - 1.0) > 0.01:
-        print(f"Warning: Energy balance not conserved (Ebal = {Ebal:.4f}, expected ~1.0)")
+        logger.warning(f"Energy balance not conserved (Ebal = {Ebal:.4f}, expected ~1.0)")
 
     return soln, Ebal

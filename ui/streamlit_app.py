@@ -7,6 +7,7 @@ import traceback
 import io
 import pandas as pd
 import time
+import logging
 
 from src.model import simulate
 from src.output_writer import write_results_to_csv
@@ -144,7 +145,8 @@ def main():
                             st.session_state['csv_data'] = rf.read()
                         os.unlink(csv_path)
                 except Exception as e:
-                    st.error(f"Error during simulation: {e}\n{traceback.format_exc()}")
+                    logging.error(f"Error during simulation: {e}", exc_info=True)
+                st.error(f"Error during simulation: {e}")
                     st.session_state.pop('results', None)
     else:
         st.info("Please upload the mechanism file and configure parameters to run the simulation.")
