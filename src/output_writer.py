@@ -53,6 +53,16 @@ def _derive_species_names(soln):
 
 
 def write_results_to_csv(soln, csv_path: str) -> str:
+    """
+    Write simulation results to CSV with per-species columns.
+
+    Args:
+        soln: Cantera SolutionArray.
+        csv_path (str): Output CSV file path.
+
+    Returns:
+        str: The CSV file path.
+    """
     """Serialize per-slice results to CSV with per-species composition columns when available."""
     n = len(soln)
     z = getattr(soln, 'z', None)

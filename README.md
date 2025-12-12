@@ -35,14 +35,22 @@ python run.py -c config.yaml -m mech/RP2_surf.yaml -o results.csv -p
 - `-c`: Path to config YAML
 - `-m`: Path to Cantera mechanism YAML
 - `-o`: Output CSV path (optional)
-- `-p`: Generate plots
+- `-p`: Generate default plots (temperature, deposition)
+- `--variables temperature,deposition,RP2`: Plot specific variables
+
+### Optimization
+Fit kinetic parameters to experimental data:
+```bash
+python optimize_kinetics.py -c config.yaml -m mech/RP2_surf.yaml -e exp_data.csv -o params.json --objective mae
+```
+- Experimental CSV: columns `z`, `deposition_rate`
 
 ### Web UI
 Launch interactive interface:
 ```bash
 streamlit run ui/streamlit_app.py
 ```
-Upload config and mechanism files, run simulation, view results and plots.
+Configure parameters directly, upload mechanism, run simulation, view dual plots, download CSV/plots.
 
 ### Config Format
 Example `config.yaml`:
@@ -60,9 +68,13 @@ reference_temperature: [{value: 300, units: 'K'}]
 ```
 
 ## Testing
-Run tests:
+Run all tests:
 ```bash
-python -m unittest tests.test_model tests.test_input_parser
+python -m unittest discover tests/
+```
+Or with pytest:
+```bash
+pytest tests/
 ```
 
 ## Dependencies

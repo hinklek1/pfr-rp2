@@ -6,6 +6,18 @@ def to_si(q):
     return q.to_base_units().magnitude
 
 def simulate(inputs, mechanism_path, kinetic_params=None, print_kinetics=False):
+    """
+    Simulate the PFR with surface reactions and deposition.
+
+    Args:
+        inputs (dict): Configuration parameters (length, diameter, etc.).
+        mechanism_path (str): Path to Cantera mechanism YAML.
+        kinetic_params (list, optional): Kinetic parameters [logA1, logA2, ..., Ea1, Ea2, ...].
+        print_kinetics (bool): If True, print reaction kinetics.
+
+    Returns:
+        tuple: (results, energy_balance) where results is Cantera SolutionArray, energy_balance is float.
+    """
     # define mech and phases
     gas = ct.Solution(mechanism_path, name='gas')
     bulk = ct.Solution(mechanism_path, name='Cbulk')

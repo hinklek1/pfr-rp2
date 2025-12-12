@@ -17,6 +17,18 @@ def _to1d(a):
 
 
 def create_plots(results: Any, mechanism_path: str, output_dir: Optional[str] = None, variables: Optional[list] = None) -> Dict[str, str]:
+    """
+    Generate plots for simulation results.
+
+    Args:
+        results: Cantera SolutionArray with simulation data.
+        mechanism_path (str): Path to mechanism (for output dir).
+        output_dir (str, optional): Directory to save plots.
+        variables (list, optional): List of variables to plot (e.g., ['temperature', 'RP2']).
+
+    Returns:
+        dict: Mapping of plot names to file paths.
+    """
     # Attempt to extract common plotted series from the Cantera SolutionArray
     z = _safe_get(results, 'z', None)
     dep = _safe_get(results, 'carbon_deposition_rate', None) or _safe_get(results, 'Cdep', None)
