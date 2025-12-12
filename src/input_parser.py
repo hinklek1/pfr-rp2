@@ -20,7 +20,7 @@ def _validate_list_of_pair(param_value, param_name: str) -> bool:
 
 
 def validate_inputs(data: Dict[str, Any]) -> None:
-    required = ['length','diameter','power','volumetric_flow_rate','T0','P0','number_of_slices']
+    required = ['length','diameter','power','volumetric_flow_rate','T0','P0','number_of_slices','inlet_composition','initial_coverages','reference_temperature']
     for key in required:
         if key not in data:
             raise ValueError(f"Missing required input: '{key}'")

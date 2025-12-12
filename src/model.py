@@ -49,12 +49,12 @@ def simulate(inputs, mechanism_path, kinetic_params=None, print_kinetics=False):
     dz = l / N
 
     # set reference temp
-    T_ref = ureg.Quantity(300, 'K')
+    T_ref = ureg.Quantity(inputs['reference_temperature'][0]['value'], inputs['reference_temperature'][1]['units'])
 
     # set Initial conditions
     T0 = ureg.Quantity(inputs['T0'][0]['value'], inputs['T0'][1]['units'])
     P0 = ureg.Quantity(inputs['P0'][0]['value'], inputs['P0'][1]['units'])
-    X0 = 'RP2:1.0' # pure decane
+    X0 = inputs['inlet_composition'][0]['value']
     gas.TPX = to_si(T_ref), to_si(P0), X0
     density_ref = gas.density_mass
     gas.TPX = to_si(T0), to_si(P0), X0
@@ -62,7 +62,7 @@ def simulate(inputs, mechanism_path, kinetic_params=None, print_kinetics=False):
     mdot = mass_flow_rate
     H_in = gas.enthalpy_mass * mass_flow_rate
     surf.TP = to_si(T0), to_si(P0)
-    surf.coverages = 'CC(s):1.0'
+    surf.coverages = inputs['initial_coverages'][0]['value']
 
     # define reactor
     reactor = ct.Reactor(gas, clone=False)

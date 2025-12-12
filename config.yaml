@@ -23,4 +23,17 @@ P0 :
 - units : 'psi'
 
 number_of_slices :
-- value : 101
+ - value : 101
+ - units : ''
+
+inlet_composition :
+ - value : 'RP2:1.0'
+ - units : ''
+
+initial_coverages :
+ - value : 'CC(s):1.0'
+ - units : ''
+
+reference_temperature :
+ - value : 300
+ - units : 'K'
