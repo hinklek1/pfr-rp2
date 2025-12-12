@@ -2,7 +2,7 @@ import unittest
 import tempfile
 import os
 import numpy as np
-from src.optimize_kinetics import objective_function, load_experimental_data
+from optimize_kinetics import objective_function, load_experimental_data
 
 
 class TestOptimization(unittest.TestCase):

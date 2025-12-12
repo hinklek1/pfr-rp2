@@ -38,7 +38,16 @@ class TestInputParserValidation(unittest.TestCase):
             " - units: 'psi'\n\n"
             "number_of_slices:\n"
             " - value: 101\n"
-            " - units: 'unitless'\n"
+            " - units: ''\n\n"
+            "inlet_composition:\n"
+            " - value: 'RP2:1.0'\n"
+            " - units: ''\n\n"
+            "initial_coverages:\n"
+            " - value: 'CC(s):1.0'\n"
+            " - units: ''\n\n"
+            "reference_temperature:\n"
+            " - value: 300\n"
+            " - units: 'K'\n"
         )
         path = self._write_yaml(content)
         try:
@@ -75,6 +84,22 @@ class TestInputParserValidation(unittest.TestCase):
     def test_empty_list_raises(self):
         content = (
             "length: []\n"
+        )
+        path = self._write_yaml(content)
+        try:
+            with self.assertRaises(ValueError):
+                get_inputs(path)
+        finally:
+            os.remove(path)
+
+    def test_missing_units_raises(self):
+        content = (
+            "length:\n"
+            " - value: 24.0\n"
+            "diameter:\n"
+            " - value: 0.055\n"
+            " - units: 'in'\n"
+            # Missing units for length
         )
         path = self._write_yaml(content)
         try:
