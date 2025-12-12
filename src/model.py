@@ -15,8 +15,8 @@ def simulate(inputs, mechanism_path, kinetic_params=None, print_kinetics=False):
     if kinetic_params is not None:
         # extract kinetic params from input
         As, Eas = np.asarray(kinetic_params[:surf.n_reactions]), np.asarray(kinetic_params[surf.n_reactions:])
-        As = np.power(10, As+3) # unit conversions (should fix this)
-        Eas = Eas*4.184*1e6     # unit conversions (should fix this)
+        As = np.power(10, As-3)  # convert from log10(A in cm^3/mol/s) to A in m^3/kmol/s
+        Eas = Eas * 4.184e6      # convert Ea from kcal/mol to J/mol
         # modify kinetics of surface reactions
         for i, A, Ea in zip(range(surf.n_reactions),As,Eas):
             original_reaction = surf.reactions()[i]
