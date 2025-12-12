@@ -61,16 +61,16 @@ def main():
 
     # Construct inputs dict
     inputs = {
-        'length': [{'value': length_val, 'units': length_unit}],
-        'diameter': [{'value': diameter_val, 'units': diameter_unit}],
-        'power': [{'value': power_val, 'units': power_unit}],
-        'volumetric_flow_rate': [{'value': flow_val, 'units': flow_unit}],
-        'T0': [{'value': T0_val, 'units': T0_unit}],
-        'P0': [{'value': P0_val, 'units': P0_unit}],
-        'number_of_slices': [{'value': int(slices), 'units': ''}],
-        'inlet_composition': [{'value': inlet_comp, 'units': ''}],
-        'initial_coverages': [{'value': initial_cov, 'units': ''}],
-        'reference_temperature': [{'value': T_ref, 'units': T_ref_unit}],
+        'length': [{'value': length_val}, {'units': length_unit}],
+        'diameter': [{'value': diameter_val}, {'units': diameter_unit}],
+        'power': [{'value': power_val}, {'units': power_unit}],
+        'volumetric_flow_rate': [{'value': flow_val}, {'units': flow_unit}],
+        'T0': [{'value': T0_val}, {'units': T0_unit}],
+        'P0': [{'value': P0_val}, {'units': P0_unit}],
+        'number_of_slices': [{'value': int(slices)}, {'units': ''}],
+        'inlet_composition': [{'value': inlet_comp}, {'units': ''}],
+        'initial_coverages': [{'value': initial_cov}, {'units': ''}],
+        'reference_temperature': [{'value': T_ref}, {'units': T_ref_unit}],
     }
 
     uploaded_mech = st.file_uploader("Upload Cantera mechanism YAML", type=["yaml", "yml"])
