@@ -5,6 +5,8 @@ src/__pychache__/
 
 # Ignore Data
 data/*
+*.csv
+*.png
 
 # Ignore Environment
 .env
